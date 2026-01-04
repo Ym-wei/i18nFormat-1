@@ -1,0 +1,24 @@
+<idea-plugin>
+    <id>com.example.i18nformat</id>
+    <name>i18n Format</name>
+    <vendor email="dev@example.com">example</vendor>
+
+    <!-- 基础语言支持 -->
+    <depends>com.intellij.modules.lang</depends>
+
+    <!-- JavaScript / TypeScript -->
+    <depends>JavaScript</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+
+        <codeInsight.inlayProvider
+                language="JavaScript"
+                implementationClass="com.example.i18nformat.I18nInlayHintsProvider"/>
+
+<!--        <codeInsight.inlayProvider-->
+<!--                language="TypeScript"-->
+<!--                implementationClass="com.example.i18nformat.I18nInlayHintsProvider"/>-->
+
+    </extensions>
+
+</idea-plugin>
