@@ -8,16 +8,20 @@
 
     <!-- JavaScript / TypeScript -->
     <depends>JavaScript</depends>
+    <depends>org.jetbrains.plugins.vue</depends>
 
     <extensions defaultExtensionNs="com.intellij">
 
         <codeInsight.inlayProvider
                 language="JavaScript"
                 implementationClass="com.example.i18nformat.I18nInlayHintsProvider"/>
+        <codeInsight.inlayProvider
+                language="Vue"
+                implementationClass="com.example.i18nformat.I18nInlayHintsProvider"/>
 
-<!--        <codeInsight.inlayProvider-->
-<!--                language="TypeScript"-->
-<!--                implementationClass="com.example.i18nformat.I18nInlayHintsProvider"/>-->
+        <!--        <codeInsight.inlayProvider-->
+        <!--                language="TypeScript"-->
+        <!--                implementationClass="com.example.i18nformat.I18nInlayHintsProvider"/>-->
 
     </extensions>
 

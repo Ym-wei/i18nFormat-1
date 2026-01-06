@@ -17,7 +17,10 @@ intellij {
     version.set("2023.3.6")
     type.set("IU") // Target IDE Platform
 
-    plugins.set(listOf("JavaScript"))
+    plugins.set(listOf(
+        "JavaScript",
+        "org.jetbrains.plugins.vue",
+    ))
 }
 
 tasks {
