@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElement                                // PSI 元素
 import com.intellij.psi.PsiFile                                   // PSI 文件
 import com.intellij.psi.util.PsiTreeUtil                          // PSI 工具类
 import javax.swing.JComponent                                     // Swing 组件
+import com.intellij.openapi.project.guessProjectDir
 
 @Suppress("UnstableApiUsage")  // 忽略 API 不稳定警告
 class I18nInlayHintsProvider : InlayHintsProvider<NoSettings> {  // 定义 I18n 内联提示提供者，实现 InlayHintsProvider 接口
@@ -128,8 +129,16 @@ class I18nInlayHintsProvider : InlayHintsProvider<NoSettings> {  // 定义 I18n 
         }
     }
 
-    private fun findZhFile(project: Project): VirtualFile? {  // 查找中文 JSON 文件
-        return project.baseDir
-            ?.findFileByRelativePath("src/locales/zh.json")  // 默认路径为 src/locales/zh.json
+    private fun findZhFile(project: Project): VirtualFile? {
+        // 1️⃣ 获取当前项目的 I18n 配置
+        val settings = I18nSettings.getInstance(project)
+        val path = settings.state.zhFilePath.takeIf { it.isNotBlank() } ?: "src/locales/zh.json"
+
+        // 2️⃣ 获取项目根目录
+        val baseDir = project.guessProjectDir() ?: return null
+
+        // 3️⃣ 查找相对路径对应的文件
+        return baseDir.findFileByRelativePath(path)
     }
+
 }
