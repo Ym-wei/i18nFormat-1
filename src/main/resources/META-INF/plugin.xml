@@ -2,7 +2,11 @@
     <id>com.ming.tagNavigator</id>
     <name>Tag Navigator</name>
     <vendor email="yming1554@gmail.com">Ming</vendor>
-
+    <description>
+        tagNavigator lets you quickly jump to files or components by tags, streamlining navigation in large projects.
+    </description>
+    <!-- 支持的IDE版本 -->
+    <idea-version since-build="233" until-build="253.*"/>
     <!-- 基础语言支持 -->
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>

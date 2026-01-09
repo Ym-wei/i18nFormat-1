@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.ming.tagNavigator"
-version = "1.0.0"
+version = "1.0.1"
 
 repositories {
     mavenCentral()
@@ -34,16 +34,13 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("232")
-        untilBuild.set("242.*")
-    }
-
-    signPlugin {
-        certificateChain.set(System.getenv("CERTIFICATE_CHAIN"))
-        privateKey.set(System.getenv("PRIVATE_KEY"))
-        password.set(System.getenv("PRIVATE_KEY_PASSWORD"))
+        untilBuild.set("252.*")
     }
 
     publishPlugin {
         token.set(System.getenv("PUBLISH_TOKEN"))
+        doFirst {
+            println("Skipping signature because no certificate is configured")
+        }
     }
 }
