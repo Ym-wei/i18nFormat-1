@@ -4,8 +4,8 @@ plugins {
     id("org.jetbrains.intellij") version "1.17.4"
 }
 
-group = "com.ming.i18nformat"
-version = "1.0.1"
+group = "com.ming.tagNavigator"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
@@ -18,7 +18,6 @@ intellij {
     type.set("IU") // Target IDE Platform
 
     plugins.set(listOf(
-        "JavaScript",
         "org.jetbrains.plugins.vue",
     ))
 }

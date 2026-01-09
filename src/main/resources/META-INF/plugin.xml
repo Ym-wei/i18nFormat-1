@@ -1,35 +1,17 @@
 <idea-plugin>
-    <id>com.ming.i18nformat</id>
-    <name>i18n Format</name>
+    <id>com.ming.tagNavigator</id>
+    <name>Tag Navigator</name>
     <vendor email="yming1554@gmail.com">Ming</vendor>
 
     <!-- 基础语言支持 -->
+    <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
 
-    <!-- JavaScript / TypeScript -->
-    <depends>JavaScript</depends>
     <depends>org.jetbrains.plugins.vue</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <projectConfigurable
-                instance="com.example.i18nformat.I18nSettingsConfigurable"
-                id="i18n.inline.settings"
-                displayName="I18n Inline Hint"/>
-
-        <codeInsight.inlayProvider
-                id="I18nInlineHintJS"
-                language="JavaScript"
-                implementationClass="com.example.i18nformat.I18nInlayHintsProvider"/>
-
-        <codeInsight.inlayProvider
-                id="I18nInlineHintVue"
-                language="Vue"
-                implementationClass="com.example.i18nformat.I18nInlayHintsProvider"/>
-
-        <!--        <codeInsight.inlayProvider-->
-        <!--                language="TypeScript"-->
-        <!--                implementationClass="com.example.i18nformat.I18nInlayHintsProvider"/>-->
-
+        <psi.referenceContributor
+                implementation="com.ming.tagNavigator.VueTagReferenceContributor"/>
     </extensions>
 
 </idea-plugin>
