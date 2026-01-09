@@ -17,10 +17,6 @@ import javax.swing.JComponent
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 
-/**
- * I18n Inline Hints Provider
- * 只处理一级 key，支持 hover 点击跳转到 zh.json
- */
 @Suppress("UnstableApiUsage")
 class I18nInlayHintsProvider : InlayHintsProvider<NoSettings> {
 
@@ -42,15 +38,13 @@ class I18nInlayHintsProvider : InlayHintsProvider<NoSettings> {
         sink: InlayHintsSink
     ): InlayHintsCollector? {
 
-        if (!file.fileType.name.contains("Vue", true)
-            && file.language.id !in setOf("JavaScript", "TypeScript")
-        ) return null
+        println("File language = ${file.language.id}")
+        val fileNameBol = file.fileType.name.contains("Vue", true)
+        val languageBol = file.language.id !in setOf("JavaScript", "TypeScript", "ECMAScript 6")
+        if (!fileNameBol && languageBol) return null
 
         val project = file.project
 
-        // ================================
-        // 读取一级 JSON
-        // ================================
         val zhFile = findZhFile(project) ?: return null
         val keyValueMap = readJson(zhFile)
 
@@ -67,9 +61,7 @@ class I18nInlayHintsProvider : InlayHintsProvider<NoSettings> {
                 sink: InlayHintsSink
             ): Boolean {
 
-                // ================================
-                // 处理 Vue 模板里注入的 JS
-                // ================================
+                // ================= Vue 注入 JS =================
                 ilm.enumerate(element) { injectedPsi, _ ->
 
                     val literal = PsiTreeUtil.findChildOfType(
@@ -77,51 +69,28 @@ class I18nInlayHintsProvider : InlayHintsProvider<NoSettings> {
                         JSLiteralExpression::class.java
                     ) ?: return@enumerate
 
-                    if (!literal.isStringLiteral) return@enumerate
-                    val key = literal.stringValue ?: return@enumerate
-                    if (key.isBlank()) return@enumerate
-
-                    val value = keyValueMap[key] ?: return@enumerate
-
-                    val offset = ilm.injectedToHost(injectedPsi, literal.textRange).endOffset
-                    if (!processedOffsets.add(offset)) return@enumerate
-
-                    val targetElement = zhPsi?.let { findJsonValueElement(it, key) }
-
-                    val presentation = factory.smallText(" $value ").let { textPresentation ->
-                        factory.referenceOnHover(textPresentation) { _, _ ->
-                            targetElement?.let {
-                                OpenFileDescriptor(project, it.containingFile.virtualFile, it.textOffset).navigate(true)
-                            }
-                        }
-                    }
-
-                    sink.addInlineElement(offset, true, factory.roundWithBackground(presentation))
+                    handleLiteral(
+                        literal = literal,
+                        offset = ilm.injectedToHost(injectedPsi, literal.textRange).endOffset,
+                        project = project,
+                        zhPsi = zhPsi,
+                        keyValueMap = keyValueMap,
+                        processedOffsets = processedOffsets,
+                        sink = sink
+                    )
                 }
 
-                // ================================
-                // 处理普通 JS / TS 文件
-                // ================================
+                // ================= 普通 JS / TS =================
                 if (element is JSLiteralExpression && element.isStringLiteral) {
-
-                    val key = element.stringValue ?: return true
-                    if (key.isBlank()) return true
-
-                    val value = keyValueMap[key] ?: return true
-                    val offset = element.textRange.endOffset
-                    if (!processedOffsets.add(offset)) return true
-
-                    val targetElement = zhPsi?.let { findJsonValueElement(it, key) }
-
-                    val presentation = factory.smallText(" $value ").let { textPresentation ->
-                        factory.referenceOnHover(textPresentation) { _, _ ->
-                            targetElement?.let {
-                                OpenFileDescriptor(project, it.containingFile.virtualFile, it.textOffset).navigate(true)
-                            }
-                        }
-                    }
-
-                    sink.addInlineElement(offset, true, factory.roundWithBackground(presentation))
+                    handleLiteral(
+                        literal = element,
+                        offset = element.textRange.endOffset,
+                        project = project,
+                        zhPsi = zhPsi,
+                        keyValueMap = keyValueMap,
+                        processedOffsets = processedOffsets,
+                        sink = sink
+                    )
                 }
 
                 return true
@@ -129,9 +98,48 @@ class I18nInlayHintsProvider : InlayHintsProvider<NoSettings> {
         }
     }
 
-    // ================================
-    // 辅助方法
-    // ================================
+
+    // ================= 抽离的统一处理函数 =================
+    private fun FactoryInlayHintsCollector.handleLiteral(
+        literal: JSLiteralExpression,
+        offset: Int,
+        project: Project,
+        zhPsi: JsonFile?,
+        keyValueMap: Map<String, String>,
+        processedOffsets: MutableSet<Int>,
+        sink: InlayHintsSink
+    ) {
+        val key = literal.stringValue ?: return
+        if (key.isBlank()) return
+
+        val value = keyValueMap[key] ?: return
+        if (!processedOffsets.add(offset)) return
+
+        val targetElement = zhPsi?.let { findJsonValueElement(it, key) }
+
+        val presentation = factory.smallText(" $value ").let { textPresentation ->
+            factory.referenceOnHover(textPresentation) { e, _ ->
+
+                // 👉 必须按 Ctrl 或 Command 才跳转
+                val ctrlPressed = e?.isControlDown == true
+                val metaPressed = e?.isMetaDown == true
+
+                if (!(ctrlPressed || metaPressed)) return@referenceOnHover
+
+                targetElement?.let {
+                    OpenFileDescriptor(
+                        project,
+                        it.containingFile.virtualFile,
+                        it.textOffset
+                    ).navigate(true)
+                }
+            }
+        }
+
+        sink.addInlineElement(offset, true, factory.roundWithBackground(presentation))
+    }
+
+    // ================= 辅助 =================
 
     private fun findZhFile(project: Project): VirtualFile? {
         val settings = I18nSettings.getInstance(project)
@@ -143,13 +151,13 @@ class I18nInlayHintsProvider : InlayHintsProvider<NoSettings> {
     private fun readJson(file: VirtualFile): Map<String, String> {
         val content = String(file.contentsToByteArray(), Charsets.UTF_8)
         val parser = SimpleJsonParser()
-        return parser.parseJson(content)  // 只解析一级 key
+        return parser.parseJson(content)
     }
 
     private fun findJsonValueElement(jsonFile: JsonFile, key: String): PsiElement? {
         val jsonObject = PsiTreeUtil.findChildOfType(jsonFile, JsonObject::class.java) ?: return null
         val prop = PsiTreeUtil.findChildrenOfType(jsonObject, JsonProperty::class.java)
             .firstOrNull { it.name == key } ?: return null
-        return prop.value  // 返回 value 部分，用于跳转
+        return prop.value
     }
 }
