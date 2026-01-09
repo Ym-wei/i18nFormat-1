@@ -2,7 +2,11 @@
     <id>com.ming.i18nformat</id>
     <name>i18n Format</name>
     <vendor email="yming1554@gmail.com">Ming</vendor>
-
+    <description>
+        This plugin provides inline hints and tag navigation for Vue/i18n projects. It allows configuring custom tag mappings via a JSON file and enables quick navigation from custom Vue tags to their corresponding source files
+    </description>
+    <!-- 支持的IDE版本 -->
+    <idea-version since-build="233" until-build="253.*"/>
     <!-- 基础语言支持 -->
     <depends>com.intellij.modules.lang</depends>
 
