@@ -5,4 +5,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = "i18nFormat"
+rootProject.name = "tagNavigator"
