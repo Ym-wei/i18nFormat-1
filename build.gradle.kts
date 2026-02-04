@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.ming.i18nformat"
-version = "1.0.3"
+version = "1.0.4"
 
 repositories {
     mavenCentral()

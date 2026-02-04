@@ -11,37 +11,43 @@ class I18nSettingsConfigurable(private val project: Project) : Configurable {
 
     private val settings = I18nSettings.getInstance(project)
     private var panel: JPanel? = null
-    private var textField: JTextField? = null
+    private val textFields = mutableListOf<JTextField>()
 
     override fun getDisplayName(): String = "I18n Format"
 
     override fun createComponent(): JComponent? {
         panel = JPanel(BorderLayout())
 
-        // 单行输入框
-        textField = JTextField(settings.state.zhFilePath)
-        textField!!.columns = 40
-        textField!!.maximumSize = Dimension(Int.MAX_VALUE, textField!!.preferredSize.height)
-        textField!!.alignmentX = Component.LEFT_ALIGNMENT
-
-        // 标签 + 输入框包装
-        val label = JLabel("Language Package JSON Path (relative to project root):")
         val wrap = JPanel()
         wrap.layout = BoxLayout(wrap, BoxLayout.Y_AXIS)
-        wrap.add(label)
-        wrap.add(Box.createVerticalStrut(4)) // 间距
-        wrap.add(textField)
+
+        settings.state.zhFilePaths.forEachIndexed { index, path ->
+            val label = JLabel("Language JSON Path ${index + 1} (relative to project root):")
+            val textField = JTextField(path)
+            textField.columns = 40
+            textField.maximumSize = Dimension(Int.MAX_VALUE, textField.preferredSize.height)
+            textField.alignmentX = Component.LEFT_ALIGNMENT
+            textFields.add(textField)
+
+            wrap.add(label)
+            wrap.add(Box.createVerticalStrut(4))
+            wrap.add(textField)
+            wrap.add(Box.createVerticalStrut(8))
+        }
 
         panel!!.add(wrap, BorderLayout.NORTH)
         return panel
     }
 
     override fun isModified(): Boolean {
-        return textField?.text != settings.state.zhFilePath
+        return textFields.map { it.text.trim() } != settings.state.zhFilePaths
     }
 
     override fun apply() {
-        settings.state.zhFilePath = textField?.text?.trim().takeIf { it?.isNotEmpty() == true }
-            ?: "src/locales/zh.json"
+        settings.state.zhFilePaths = textFields.map { it.text.trim() }.take(5).toMutableList()
+        // 确保第一个不为空
+        if (settings.state.zhFilePaths[0].isEmpty()) {
+            settings.state.zhFilePaths[0] = "src/locales/zh.json"
+        }
     }
 }

@@ -3,7 +3,12 @@
     <name>i18n Format</name>
     <vendor email="yming1554@gmail.com">Ming</vendor>
     <description>
-        This plugin provides inline hints and tag navigation for Vue/i18n projects. It allows configuring custom tag mappings via a JSON file and enables quick navigation from custom Vue tags to their corresponding source files
+        This plugin provides inline hints and tag navigation for Vue/i18n projects.
+        It allows configuring custom tag mappings via a JSON file and enables quick navigation from custom Vue tags to their corresponding source files.
+
+
+        本插件为 Vue/i18n 项目提供内联提示和标签跳转功能。
+        它允许通过 JSON 文件配置自定义标签映射，并能快速从自定义 Vue 标签导航到对应的源文件。
     </description>
     <!-- 支持的IDE版本 -->
     <idea-version since-build="233" until-build="253.*"/>

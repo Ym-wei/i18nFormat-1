@@ -11,7 +11,9 @@ import com.intellij.openapi.project.Project
 class I18nSettings : PersistentStateComponent<I18nSettings.State> {
 
     data class State(
-        var zhFilePath: String = "src/locales/zh.json"
+        var zhFilePaths: MutableList<String> = mutableListOf(
+            "src/locales/zh.json", "", "", "", ""
+        )
     )
 
     private var myState = State()
@@ -19,7 +21,10 @@ class I18nSettings : PersistentStateComponent<I18nSettings.State> {
     override fun getState(): State = myState
 
     override fun loadState(state: State) {
-        myState = state
+        // 确保总共有5个元素
+        myState = State(
+            zhFilePaths = (state.zhFilePaths + List(5) { "" }).take(5).toMutableList()
+        )
     }
 
     companion object {
