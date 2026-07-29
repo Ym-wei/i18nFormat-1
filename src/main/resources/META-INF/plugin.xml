@@ -11,7 +11,7 @@
         它允许通过 JSON 文件配置自定义标签映射，并能快速从自定义 Vue 标签导航到对应的源文件。
     </description>
     <!-- 支持的IDE版本 -->
-    <idea-version since-build="233" until-build="253.*"/>
+    <idea-version since-build="233" until-build="261.*"/>
     <!-- 基础语言支持 -->
     <depends>com.intellij.modules.lang</depends>
 

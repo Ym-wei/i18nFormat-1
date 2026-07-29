@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.ming.i18nformat"
-version = "1.0.4"
+version = "1.0.5"
 
 repositories {
     mavenCentral()
@@ -35,7 +35,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("233")
-        untilBuild.set("253.*")
+        untilBuild.set("261.*")
     }
 
 //    signPlugin {
