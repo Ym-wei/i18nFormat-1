@@ -5,17 +5,20 @@ plugins {
 }
 
 group = "com.ming.i18nformat"
-version = "1.0.5"
+version = "1.0.7"
 
 repositories {
+    maven("https://maven.aliyun.com/repository/central")
     mavenCentral()
 }
 
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-    version.set("2023.3.6")
-    type.set("IU") // Target IDE Platform
+    // 使用本地已安装的 IDEA 作为编译/调试平台，避免下载 IDE 发行包
+    localPath.set("D:/IDEA/IDEA2024/IntelliJ IDEA 2024.2.6")
+    // 本地 IDEA 缺少 java-compiler-ant-tasks 时跳过字节码插桩
+    instrumentCode.set(false)
 
     plugins.set(listOf(
         "JavaScript",
@@ -35,7 +38,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("233")
-        untilBuild.set("261.*")
+        untilBuild.set("262.*")
     }
 
 //    signPlugin {
