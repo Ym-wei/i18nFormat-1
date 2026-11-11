@@ -2,7 +2,48 @@
     <id>com.ming.i18nformat</id>
     <name>i18n Format</name>
     <vendor email="yming1554@gmail.com">Ming</vendor>
-    <description><![CDATA[
+    <description><![CDATA[<p>I18n Format is a translation helper for Vue / i18n projects: it shows the translation of i18n keys directly in code as inlay hints, and lets you search the project by translation text.</p>
+
+        <h3>Features</h3>
+        <ul>
+            <li><b>Translation inlay hints</b>: in Vue / JavaScript / TypeScript, keys such as <code>$t('login.title')</code> or <code>t("login.title")</code> show their translation as a gray inlay hint, so you do not need to open the locale file.</li>
+            <li><b>In-file translation search</b>: press <code>Ctrl+F</code> and an I18n search bar appears under the native find bar. Type a translation (e.g. “login”), and the plugin resolves matching keys from the locale JSON and highlights every occurrence in the current file.</li>
+            <li><b>Global translation search</b>: press <code>Ctrl+Alt+Shift+F</code> to open a “Find in Files” style window that lists, grouped by file, every place in the project that references the translation.</li>
+        </ul>
+
+        <h3>How to use</h3>
+        <p><b>1. Configure locale files</b><br/>
+        Open <code>Settings → I18n Inline Hint</code> and fill in the locale JSON paths (relative to the project root, up to 5 files). The default is <code>src/locales/zh.json</code>. Inlay hints and both search features use these files.</p>
+
+        <p><b>2. In-file translation search (Ctrl+F)</b></p>
+        <ul>
+            <li>Press <code>Ctrl+F</code> and type a translation in the I18n bar under the native find bar; results update as you type, no Enter needed.</li>
+            <li>Use <code>↑</code> / <code>↓</code> to move between matches; the status shows “2/5”.</li>
+            <li>Matches are highlighted with the theme selection color and a rounded box; clearing the input removes the highlights.</li>
+            <li>The <b>Global Search</b> link on the right opens the global search window.</li>
+        </ul>
+
+        <p><b>3. Global translation search (Ctrl+Alt+Shift+F)</b></p>
+        <ul>
+            <li>Type a translation and the whole project is searched automatically. Results are grouped by file — the file name is followed by “N occurrences”, and each child row shows the line number, translation and key.</li>
+            <li>Use <code>↑</code> / <code>↓</code> to change the selection; press <code>Enter</code> or double-click to open the file and close the window.</li>
+            <li>Searches vue / ts / js / jsx / tsx / html files in the project, skips node_modules, dist, build, .git and similar folders, and returns at most 300 results per search.</li>
+        </ul>
+
+        <h3>Matching rules</h3>
+        <ul>
+            <li>Translations are matched by “contains keyword, case-insensitive”: “login” also matches “please login first” and “login succeeded”.</li>
+            <li>Code is matched on string literals <code>'key'</code> and <code>"key"</code> — both single and double quotes are supported.</li>
+        </ul>
+
+        <h3>Requirements</h3>
+        <ul>
+            <li>IntelliJ IDEA 2023.3 or later (developed and verified on 2024.2.6).</li>
+            <li>The bundled JavaScript/TypeScript and Vue plugins (included in IntelliJ IDEA Ultimate by default).</li>
+        </ul>
+
+        <h2>中文</h2>
+
         <p>面向 Vue / i18n 项目的译文辅助工具：在代码中直接看到 i18n key 对应的中文，并支持按「译文」反查代码里的引用位置。</p>
 
         <h3>功能</h3>
@@ -43,47 +84,6 @@
             <li>内置 JavaScript/TypeScript 与 Vue 插件（IDEA 旗舰版默认自带）。</li>
         </ul>
 
-        <h2>English</h2>
-
-        <p>A translation helper for Vue / i18n projects: see the Chinese text of i18n keys directly in code, and search code by translation text.</p>
-
-        <h3>Features</h3>
-        <ul>
-            <li><b>Translation inlay hints</b>: in Vue / JavaScript / TypeScript, keys such as <code>$t('login.title')</code> or <code>t("login.title")</code> show their translation as a gray inlay hint, so you do not need to open the locale file.</li>
-            <li><b>In-file translation search</b>: press <code>Ctrl+F</code> and an I18n search bar appears under the native find bar. Type a translation (e.g. “login”), and the plugin resolves matching keys from the locale JSON and highlights every occurrence in the current file.</li>
-            <li><b>Global translation search</b>: press <code>Ctrl+Alt+Shift+F</code> to open a “Find in Files” style window that lists, grouped by file, every place in the project that references the translation.</li>
-        </ul>
-
-        <h3>How to use</h3>
-        <p><b>1. Configure locale files</b><br/>
-        Open <code>Settings → I18n Inline Hint</code> and fill in the locale JSON paths (relative to the project root, up to 5 files). The default is <code>src/locales/zh.json</code>. Inlay hints and both search features use these files.</p>
-
-        <p><b>2. In-file translation search (Ctrl+F)</b></p>
-        <ul>
-            <li>Press <code>Ctrl+F</code> and type a translation in the I18n bar under the native find bar; results update as you type, no Enter needed.</li>
-            <li>Use <code>↑</code> / <code>↓</code> to move between matches; the status shows “2/5”.</li>
-            <li>Matches are highlighted with the theme selection color and a rounded box; clearing the input removes the highlights.</li>
-            <li>The <b>Global Search</b> link on the right opens the global search window.</li>
-        </ul>
-
-        <p><b>3. Global translation search (Ctrl+Alt+Shift+F)</b></p>
-        <ul>
-            <li>Type a translation and the whole project is searched automatically. Results are grouped by file — the file name is followed by “N occurrences”, and each child row shows the line number, translation and key.</li>
-            <li>Use <code>↑</code> / <code>↓</code> to change the selection; press <code>Enter</code> or double-click to open the file and close the window.</li>
-            <li>Searches vue / ts / js / jsx / tsx / html files in the project, skips node_modules, dist, build, .git and similar folders, and returns at most 300 results per search.</li>
-        </ul>
-
-        <h3>Matching rules</h3>
-        <ul>
-            <li>Translations are matched by “contains keyword, case-insensitive”: “login” also matches “please login first” and “login succeeded”.</li>
-            <li>Code is matched on string literals <code>'key'</code> and <code>"key"</code> — both single and double quotes are supported.</li>
-        </ul>
-
-        <h3>Requirements</h3>
-        <ul>
-            <li>IntelliJ IDEA 2023.3 or later (developed and verified on 2024.2.6).</li>
-            <li>The bundled JavaScript/TypeScript and Vue plugins (included in IntelliJ IDEA Ultimate by default).</li>
-        </ul>
     ]]></description>
 
     <change-notes><![CDATA[

@@ -5,7 +5,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.ReadAction
-import com.intellij.openapi.components.service
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
@@ -61,7 +60,10 @@ private val IGNORED_DIRS = setOf(
     "node_modules", "unpackage", "dist", "build", "out", "coverage",
     ".git", ".idea", ".gradle", ".hbuilderx"
 )
-private val TextCache = java.util.concurrent.ConcurrentHashMap<String, Pair<Long, String>>()
+// 文件内容缓存总量上限，超出后整体清空，避免大工程把正文长期驻留堆里
+private const val TEXT_CACHE_MAX_CHARS = 1_000_000 // 约 2 MB
+private val TextCache = java.util.concurrent.ConcurrentHashMap<String, Pair<Long, String>>(16)
+private var TextCacheChars = 0
 
 // 结果树的配色：深浅主题各一套
 private val ACCENT_COLOR = JBColor(0x2F6FA8, 0x7FB2E5)
@@ -74,7 +76,7 @@ private val KEY_ATTRIBUTES = SimpleTextAttributes(SimpleTextAttributes.STYLE_PLA
  * 输入译文 -> 在 zh.json 中匹配 key -> 扫描工程内代码文件，找出这些 key 的引用位置
  */
 internal fun collectI18nUsages(project: Project, keyword: String, cancelled: () -> Boolean): List<I18nUsage> {
-    val entries = project.service<I18nTranslationService>().findEntries(keyword)
+    val entries = project.getService(I18nTranslationService::class.java).findEntries(keyword)
     if (entries.isEmpty()) return emptyList()
 
     val uniqueEntries = entries.distinctBy { it.key }
@@ -116,7 +118,15 @@ private fun loadText(file: VirtualFile): String? {
             null
         }
     } ?: return null
-    TextCache[file.path] = stamp to text
+    synchronized(TextCache) {
+        val old = TextCache.put(file.path, stamp to text)
+        if (old != null) TextCacheChars -= old.second.length
+        TextCacheChars += text.length
+        if (TextCacheChars > TEXT_CACHE_MAX_CHARS) {
+            TextCache.clear()
+            TextCacheChars = 0
+        }
+    }
     return text
 }
 
@@ -244,6 +254,13 @@ class I18nGlobalSearchDialog(private val project: Project) : DialogWrapper(proje
     }
 
     override fun createActions(): Array<Action> = emptyArray()
+
+    // 弹窗关掉后立刻释放文件正文缓存，不让它留到下一次搜索
+    override fun dispose() {
+        TextCache.clear()
+        TextCacheChars = 0
+        super.dispose()
+    }
 
     override fun getPreferredFocusedComponent(): JComponent = keywordField
 

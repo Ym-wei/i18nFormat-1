@@ -5,7 +5,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.components.Service
-import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.editor.colors.EditorColors
@@ -46,7 +45,7 @@ import java.awt.event.KeyEvent
  */
 class I18nFindSyncStartup : ProjectActivity {
     override suspend fun execute(project: Project) {
-        project.service<I18nFindSyncService>()
+        project.getService(I18nFindSyncService::class.java)
     }
 }
 
@@ -240,7 +239,7 @@ private class I18nEditorSearchSession(
         }
 
         pending = AppExecutorUtil.getAppExecutorService().submit {
-            val keys = project.service<I18nTranslationService>()
+            val keys = project.getService(I18nTranslationService::class.java)
                 .findEntries(keyword)
                 .map { it.key }
                 .distinct()

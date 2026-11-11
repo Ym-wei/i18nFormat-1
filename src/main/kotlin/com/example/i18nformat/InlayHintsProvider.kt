@@ -20,6 +20,12 @@ class I18nInlayHintsProvider : InlayHintsProvider<NoSettings> {
     override val name: String = "I18n Inline Hint"
     override val previewText: String = "t('home')"
 
+    // 译文 map 按 JSON 修改时间缓存，避免每次刷新提示都重新读盘解析
+    @Volatile
+    private var cachedKeyMapSignature: String? = null
+    @Volatile
+    private var cachedKeyMap: Map<String, String> = emptyMap()
+
     override fun createSettings(): NoSettings = NoSettings()
 
     override fun createConfigurable(settings: NoSettings): ImmediateConfigurable =
@@ -47,7 +53,7 @@ class I18nInlayHintsProvider : InlayHintsProvider<NoSettings> {
         if (zhFiles.isEmpty()) return null
 
         // ===== 2. 扁平 key（平级 key 直接命中）=====
-        val flatKeyMap = readJsonFiles(zhFiles)
+        val flatKeyMap = flatKeyMapOf(zhFiles)
 
         // ===== 3. JsonObject 根（用于递归查找）=====
         val jsonRoots = buildJsonRoots(project, zhFiles)
@@ -175,6 +181,16 @@ class I18nInlayHintsProvider : InlayHintsProvider<NoSettings> {
             result.putAll(parser.parseJson(content))
         }
         return result
+    }
+
+    // 只在 JSON 文件内容变化时重新解析
+    private fun flatKeyMapOf(files: List<VirtualFile>): Map<String, String> {
+        val signature = files.joinToString("|") { "${it.path}@${it.modificationStamp}" }
+        if (signature == cachedKeyMapSignature) return cachedKeyMap
+        val map = readJsonFiles(files)
+        cachedKeyMap = map
+        cachedKeyMapSignature = signature
+        return map
     }
 
     private fun buildJsonRoots(

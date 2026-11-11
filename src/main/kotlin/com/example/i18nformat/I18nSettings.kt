@@ -29,6 +29,6 @@ class I18nSettings : PersistentStateComponent<I18nSettings.State> {
 
     companion object {
         @JvmStatic
-        fun getInstance(project: Project): I18nSettings = project.service()
+        fun getInstance(project: Project): I18nSettings = project.getService(I18nSettings::class.java)
     }
 }
