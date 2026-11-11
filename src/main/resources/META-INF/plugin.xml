@@ -2,16 +2,111 @@
     <id>com.ming.i18nformat</id>
     <name>i18n Format</name>
     <vendor email="yming1554@gmail.com">Ming</vendor>
-    <description>
-        This plugin provides inline hints and tag navigation for Vue/i18n projects.
-        It allows configuring custom tag mappings via a JSON file and enables quick navigation from custom Vue tags to their corresponding source files.
+    <description><![CDATA[
+        <p>面向 Vue / i18n 项目的译文辅助工具：在代码中直接看到 i18n key 对应的中文，并支持按「译文」反查代码里的引用位置。</p>
 
+        <h3>功能</h3>
+        <ul>
+            <li><b>译文内联提示</b>：在 Vue / JavaScript / TypeScript 中，<code>$t('login.title')</code>、<code>t("login.title")</code> 等 key 后会以灰字显示对应译文，无需跳转语言文件。</li>
+            <li><b>当前文件译文搜索</b>：按 <code>Ctrl+F</code> 打开原生查找栏时，下方会出现 I18n 译文搜索条。输入中文译文后，自动在语言 JSON 中匹配 key，并在当前文件高亮所有引用处。</li>
+            <li><b>全局译文搜索</b>：按 <code>Ctrl+Alt+Shift+F</code> 打开仿「在文件中查找」的搜索窗口，按文件分组列出整个工程中引用该译文的代码位置。</li>
+        </ul>
 
-        本插件为 Vue/i18n 项目提供内联提示和标签跳转功能。
-        它允许通过 JSON 文件配置自定义标签映射，并能快速从自定义 Vue 标签导航到对应的源文件。
-    </description>
+        <h3>使用说明</h3>
+        <p><b>1. 配置语言文件</b><br/>
+        打开 <code>Settings → I18n Inline Hint</code>，填写语言 JSON 路径（相对项目根目录，最多 5 个），默认 <code>src/locales/zh.json</code>。内联提示与两种搜索都基于这里配置的文件。</p>
+
+        <p><b>2. 当前文件译文搜索（Ctrl+F）</b></p>
+        <ul>
+            <li>按 <code>Ctrl+F</code>，在原生查找栏下方输入译文，如「登录」；输入过程中自动搜索，无需回车。</li>
+            <li><code>↑</code> / <code>↓</code> 在命中项之间切换，状态栏显示「第 2/5 处」。</li>
+            <li>命中处使用主题选中色高亮并带圆角框；清空输入即清除高亮。</li>
+            <li>右侧「全局搜索」链接可直接打开全局搜索窗口。</li>
+        </ul>
+
+        <p><b>3. 全局译文搜索（Ctrl+Alt+Shift+F）</b></p>
+        <ul>
+            <li>输入译文后自动检索全工程，结果按文件分组显示，文件名后是「N 处」，子项显示行号、译文与 key。</li>
+            <li><code>↑</code> / <code>↓</code> 切换选中项，<code>Enter</code> 或双击跳转到对应文件并关闭窗口。</li>
+            <li>检索范围为工程内的 vue / ts / js / jsx / tsx / html 文件，自动跳过 node_modules、dist、build、.git 等目录，单次最多返回 300 处结果。</li>
+        </ul>
+
+        <h3>匹配规则</h3>
+        <ul>
+            <li>译文匹配为「包含关键字、忽略大小写」：输入「登录」可命中「请先登录」「登录成功」。</li>
+            <li>代码匹配为字符串字面量 <code>'key'</code> 与 <code>"key"</code>，支持单引号与双引号写法。</li>
+        </ul>
+
+        <h3>环境要求</h3>
+        <ul>
+            <li>IntelliJ IDEA 2023.3 及以上（开发与验证版本为 2024.2.6）。</li>
+            <li>内置 JavaScript/TypeScript 与 Vue 插件（IDEA 旗舰版默认自带）。</li>
+        </ul>
+
+        <h2>English</h2>
+
+        <p>A translation helper for Vue / i18n projects: see the Chinese text of i18n keys directly in code, and search code by translation text.</p>
+
+        <h3>Features</h3>
+        <ul>
+            <li><b>Translation inlay hints</b>: in Vue / JavaScript / TypeScript, keys such as <code>$t('login.title')</code> or <code>t("login.title")</code> show their translation as a gray inlay hint, so you do not need to open the locale file.</li>
+            <li><b>In-file translation search</b>: press <code>Ctrl+F</code> and an I18n search bar appears under the native find bar. Type a translation (e.g. “login”), and the plugin resolves matching keys from the locale JSON and highlights every occurrence in the current file.</li>
+            <li><b>Global translation search</b>: press <code>Ctrl+Alt+Shift+F</code> to open a “Find in Files” style window that lists, grouped by file, every place in the project that references the translation.</li>
+        </ul>
+
+        <h3>How to use</h3>
+        <p><b>1. Configure locale files</b><br/>
+        Open <code>Settings → I18n Inline Hint</code> and fill in the locale JSON paths (relative to the project root, up to 5 files). The default is <code>src/locales/zh.json</code>. Inlay hints and both search features use these files.</p>
+
+        <p><b>2. In-file translation search (Ctrl+F)</b></p>
+        <ul>
+            <li>Press <code>Ctrl+F</code> and type a translation in the I18n bar under the native find bar; results update as you type, no Enter needed.</li>
+            <li>Use <code>↑</code> / <code>↓</code> to move between matches; the status shows “2/5”.</li>
+            <li>Matches are highlighted with the theme selection color and a rounded box; clearing the input removes the highlights.</li>
+            <li>The <b>Global Search</b> link on the right opens the global search window.</li>
+        </ul>
+
+        <p><b>3. Global translation search (Ctrl+Alt+Shift+F)</b></p>
+        <ul>
+            <li>Type a translation and the whole project is searched automatically. Results are grouped by file — the file name is followed by “N occurrences”, and each child row shows the line number, translation and key.</li>
+            <li>Use <code>↑</code> / <code>↓</code> to change the selection; press <code>Enter</code> or double-click to open the file and close the window.</li>
+            <li>Searches vue / ts / js / jsx / tsx / html files in the project, skips node_modules, dist, build, .git and similar folders, and returns at most 300 results per search.</li>
+        </ul>
+
+        <h3>Matching rules</h3>
+        <ul>
+            <li>Translations are matched by “contains keyword, case-insensitive”: “login” also matches “please login first” and “login succeeded”.</li>
+            <li>Code is matched on string literals <code>'key'</code> and <code>"key"</code> — both single and double quotes are supported.</li>
+        </ul>
+
+        <h3>Requirements</h3>
+        <ul>
+            <li>IntelliJ IDEA 2023.3 or later (developed and verified on 2024.2.6).</li>
+            <li>The bundled JavaScript/TypeScript and Vue plugins (included in IntelliJ IDEA Ultimate by default).</li>
+        </ul>
+    ]]></description>
+
+    <change-notes><![CDATA[
+        <h3>1.0.7</h3>
+        <ul>
+            <li>新增「当前文件译文搜索」：按 Ctrl+F 时在原生查找栏下方显示 I18n 译文搜索条，输入译文即可匹配 key 并在当前文件高亮，支持 ↑↓ 切换、主题色圆角高亮。</li>
+            <li>新增「全局译文搜索」：按 Ctrl+Alt+Shift+F 打开仿「在文件中查找」的窗口，结果按文件分组显示行号与译文，支持 ↑↓ 切换、Enter 或双击跳转。</li>
+            <li>译文搜索条右侧新增「全局搜索」入口。</li>
+            <li>重写插件说明与变更说明，补充完整的中文使用文档与英文版本。</li>
+            <li>优化搜索逻辑：译文按「包含关键字、忽略大小写」匹配，修复输入较长译文时搜不到结果的问题。</li>
+        </ul>
+
+        <h3>English — 1.0.7</h3>
+        <ul>
+            <li>New in-file translation search: pressing Ctrl+F shows an I18n search bar under the native find bar; typing a translation resolves matching keys and highlights all occurrences in the current file, with ↑↓ navigation and theme-colored rounded highlights.</li>
+            <li>New global translation search: Ctrl+Alt+Shift+F opens a Find-in-Files style window with results grouped by file, showing line numbers and translations; navigate with ↑↓ and jump with Enter or double-click.</li>
+            <li>Added a “Global Search” link on the right side of the in-file search bar.</li>
+            <li>Rewrote the plugin description and change notes with complete Chinese documentation and an English version.</li>
+            <li>Improved search matching: translations are matched by “contains keyword, case-insensitive”, fixing cases where longer translations returned no results.</li>
+        </ul>
+    ]]></change-notes>
     <!-- 支持的IDE版本 -->
-    <idea-version since-build="233" until-build="261.*"/>
+    <idea-version since-build="233" until-build="263.*"/>
     <!-- 基础语言支持 -->
     <depends>com.intellij.modules.lang</depends>
 
@@ -39,6 +134,17 @@
         <!--                language="TypeScript"-->
         <!--                implementationClass="com.example.i18nformat.I18nInlayHintsProvider"/>-->
 
+        <postStartupActivity implementation="com.example.i18nformat.I18nFindSyncStartup"/>
     </extensions>
+
+    <actions>
+        <!-- 全局按译文搜索，列出全项目引用位置 -->
+        <action id="I18n.GlobalSearch"
+                class="com.example.i18nformat.I18nGlobalSearchAction"
+                text="I18n 全局搜索"
+                description="在 zh.json 中按译文检索，并列出全项目引用该 key 的位置">
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt shift F"/>
+        </action>
+    </actions>
 
 </idea-plugin>

@@ -151,7 +151,8 @@ class I18nInlayHintsProvider : InlayHintsProvider<NoSettings> {
             }
         }
 
-        sink.addInlineElement(offset, true, factory.roundWithBackground(presentation))
+        // 4 参重载替代已废弃的 3 参版本（padding=false）
+        sink.addInlineElement(offset, true, factory.roundWithBackground(presentation), false)
     }
 
     // ================= JSON 解析辅助 =================
